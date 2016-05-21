@@ -58,7 +58,9 @@ def import_from_html(filename_or_fobj, encoding='utf-8', index=0,
 
     filename, fobj = get_filename_and_fobj(filename_or_fobj)
     kwargs['encoding'] = encoding
-    html = fobj.read().decode(encoding)
+    html = fobj.read()
+    if not isinstance(html, six.text_type):
+        html = html.decode(encoding)
     html_tree = document_fromstring(html)
     tables = html_tree.xpath('//{}'.format(table_tag))
     table = tables[index]

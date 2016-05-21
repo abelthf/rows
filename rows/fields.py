@@ -33,7 +33,7 @@ __all__ = ['BoolField', 'IntegerField', 'FloatField', 'DatetimeField',
            'EmailField', 'TextField', 'BinaryField', 'Field']
 REGEXP_ONLY_NUMBERS = re.compile('[^0-9]')
 SHOULD_NOT_USE_LOCALE = True  # This variable is changed by rows.locale_manager
-NULL = (b'-', b'null', b'none', b'nil', b'n/a', b'na')
+NULL = ('-', 'null', 'none', 'nil', 'n/a', 'na')
 
 
 class Field(object):
@@ -106,8 +106,8 @@ class BoolField(Field):
 
     TYPE = (bool, )
     SERIALIZED_VALUES = {True: 'true', False: 'false', None: ''}
-    TRUE_VALUES = (b'true', b'1', b'yes')
-    FALSE_VALUES = (b'false', b'0', b'no')
+    TRUE_VALUES = ('true', '1', 'yes')
+    FALSE_VALUES = ('false', '0', 'no')
 
     @classmethod
     def serialize(cls, value, *args, **kwargs):
@@ -119,7 +119,7 @@ class BoolField(Field):
         if value is None or isinstance(value, cls.TYPE):
             return value
 
-        value = as_string(value)
+        value = as_text(value)
         if value in cls.TRUE_VALUES:
             return True
         elif value in cls.FALSE_VALUES:
@@ -159,7 +159,7 @@ class IntegerField(Field):
             else:
                 value = new_value
 
-        value = as_string(value)
+        value = as_text(value)
         return int(value) if SHOULD_NOT_USE_LOCALE \
                           else locale.atoi(value)
 
@@ -189,7 +189,7 @@ class FloatField(Field):
         if value is None or isinstance(value, cls.TYPE):
             return value
 
-        value = as_string(value)
+        value = as_text(value)
         if SHOULD_NOT_USE_LOCALE:
             return float(value)
         else:
@@ -247,7 +247,7 @@ class DecimalField(Field):
                      for x in interesting_vars)
             interesting_chars = ''.join(set(chars))
             regexp = re.compile(r'[^0-9{} ]'.format(interesting_chars))
-            value = as_string(value)
+            value = as_text(value)
             if regexp.findall(value):
                 raise ValueError("Can't be {}".format(cls.__name__))
 
@@ -289,7 +289,7 @@ class PercentField(DecimalField):
         elif is_null(value):
             return None
 
-        value = as_string(value)
+        value = as_text(value)
         if '%' not in value:
             raise ValueError("Can't be {}".format(cls.__name__))
         value = value.replace('%', '')
@@ -319,10 +319,7 @@ class DateField(Field):
         if value is None or isinstance(value, cls.TYPE):
             return value
 
-        value = as_string(value)
-        if isinstance(value, six.text_type):
-            value = value.encode('utf-8')
-
+        value = as_text(value)
         dt_object = datetime.datetime.strptime(value, cls.INPUT_FORMAT)
         return datetime.date(dt_object.year, dt_object.month, dt_object.day)
 
@@ -350,7 +347,7 @@ class DatetimeField(Field):
         if value is None or isinstance(value, cls.TYPE):
             return value
 
-        value = as_string(value)
+        value = as_text(value)
         # TODO: may use iso8601
         groups = cls.DATETIME_REGEXP.findall(value)
         if not groups:
@@ -376,7 +373,7 @@ class TextField(Field):
         if isinstance(value, cls.TYPE):
             return value
         elif 'encoding' in kwargs:
-            return as_string(value).decode(kwargs['encoding'])
+            return as_text(value).decode(kwargs['encoding'])
         else:
             return cls.TYPE[0](value)
 
@@ -438,7 +435,7 @@ AVAILABLE_FIELD_TYPES = [globals()[element] for element in __all__
                          if 'Field' in element and element != 'Field']
 
 
-def as_string(value):
+def as_text(value):
     if isinstance(value, six.string_types):
         return value
     else:
@@ -449,7 +446,7 @@ def is_null(value):
     if value is None:
         return True
 
-    value_str = as_string(value).strip().lower()
+    value_str = as_text(value).strip().lower()
     return not value_str or value_str in NULL
 
 
@@ -517,8 +514,8 @@ TYPES = [(key, globals().get(key)) for key in __all__]
 
 
 def identify_type(value):
-    value_type = type(value)
-    if value_type not in six.string_types:
+    if not isinstance(value, (six.text_type, six.binary_type)):
+        value_type = type(value)
         possible_types = [type_class for type_name, type_class in TYPES
                           if value_type in type_class.TYPE]
         if not possible_types:
@@ -529,4 +526,3 @@ def identify_type(value):
         detected = detect_types(['some_field'], [[value]])['some_field']
 
     return detected
-

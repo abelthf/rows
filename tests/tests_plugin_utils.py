@@ -239,8 +239,10 @@ class PluginUtilsTestCase(utils.RowsTestMixIn, unittest.TestCase):
         kwargs = {'export_fields': 123, 'other_parameter': 3.14, }
         result = plugins_utils.serialize(table, **kwargs)
         self.assertFalse(mocked_prepare_to_export.called)
-        field_names = next(result)
-        table_rows = list(result)
+        try:
+            field_names = next(result)
+        except TypeError:
+            pass
         self.assertTrue(mocked_prepare_to_export.called)
         self.assertEqual(mocked_prepare_to_export.call_count, 1)
         self.assertEqual(mock.call(table, **kwargs),

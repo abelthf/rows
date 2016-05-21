@@ -24,6 +24,7 @@ import platform
 import unittest
 import six
 
+from codecs import open
 from decimal import Decimal
 
 import rows
@@ -314,10 +315,7 @@ class FieldsTestCase(unittest.TestCase):
         self.assertIn(type(fields.TextField.deserialize('test')),
                       fields.TextField.TYPE)
         self.assertEqual(
-            fields.TextField.deserialize(
-                'Álvaro'.encode('utf-8'),
-                encoding='utf-8'
-            ),
+            fields.TextField.deserialize('Álvaro', encoding='utf-8'),
             'Álvaro'
         )
         self.assertEqual(fields.TextField.deserialize('Álvaro'),
@@ -345,9 +343,9 @@ class FieldUtilsTestCase(unittest.TestCase):
     maxDiff = None
 
     def setUp(self):
-        with open('tests/data/all-field-types.csv') as fobj:
+        with open('tests/data/all-field-types.csv', encoding='utf-8') as fobj:
             lines = fobj.read().splitlines()
-        lines = [line.split(','.encode('utf-8')) for line in lines]
+        lines = [line.split(',') for line in lines]
         self.fields = lines[0]
         self.data = lines[1:]
         self.expected = {'bool_column': fields.BoolField,
@@ -371,7 +369,7 @@ class FieldUtilsTestCase(unittest.TestCase):
         self.assertDictEqual(dict(result), self.expected)
 
     def test_detect_types_unicode(self):
-        data = [[field.decode('utf-8') for field in row] for row in self.data]
+        data = [[field for field in row] for row in self.data]
         result = fields.detect_types(self.fields, data)
         self.assertDictEqual(dict(result), self.expected)
 
@@ -393,12 +391,10 @@ class FieldsFunctionsTestCase(unittest.TestCase):
         self.assertEqual(fields.is_null('-'), True)
 
         self.assertEqual(fields.is_null('Álvaro'), False)
-        self.assertEqual(fields.is_null('Álvaro'.encode('utf-8')), False)
+        self.assertEqual(fields.is_null('Álvaro'), False)
 
-    def test_as_string(self):
-        self.assertEqual(fields.as_string(None), 'None')
-        self.assertEqual(fields.as_string(42), '42')
-        self.assertEqual(fields.as_string(3.141592), '3.141592')
-        self.assertEqual(fields.as_string('Álvaro'), 'Álvaro')
-        self.assertEqual(fields.as_string('Álvaro'.encode('utf-8')),
-                         'Álvaro'.encode('utf-8'))
+    def test_as_text(self):
+        self.assertEqual(fields.as_text(None), 'None')
+        self.assertEqual(fields.as_text(42), '42')
+        self.assertEqual(fields.as_text(3.141592), '3.141592')
+        self.assertEqual(fields.as_text('Álvaro'), 'Álvaro')
