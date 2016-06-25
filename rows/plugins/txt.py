@@ -70,4 +70,4 @@ def export_to_txt(table, filename_or_fobj=None, encoding='utf-8', *args, **kwarg
     result.extend([split_line, ''])
     data = '\n'.join(result).encode(encoding)
 
-    return export_data(filename_or_fobj, data)
+    return export_data(filename_or_fobj, data, mode='wb')
