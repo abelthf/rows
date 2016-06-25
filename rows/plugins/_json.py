@@ -30,7 +30,7 @@ def import_from_json(filename_or_fobj, encoding='utf-8', *args, **kwargs):
     'Import data from a JSON file'
 
     kwargs['encoding'] = encoding
-    filename, fobj = get_filename_and_fobj(filename_or_fobj)
+    filename, fobj = get_filename_and_fobj(filename_or_fobj, mode='rb')
 
     json_obj = json.load(fobj, encoding=encoding)
     field_names = list(json_obj[0].keys())

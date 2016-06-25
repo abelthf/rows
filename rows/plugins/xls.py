@@ -67,7 +67,7 @@ def cell_value(sheet, row, col):
 def import_from_xls(filename_or_fobj, sheet_name=None, sheet_index=0,
                     start_row=0, start_column=0, *args, **kwargs):
 
-    filename, _ = get_filename_and_fobj(filename_or_fobj)
+    filename, _ = get_filename_and_fobj(filename_or_fobj, mode='rb')
     book = xlrd.open_workbook(filename, formatting_info=True)
     if sheet_name is not None:
         sheet = book.sheet_by_name(sheet_name)

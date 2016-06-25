@@ -45,7 +45,7 @@ def import_from_ods(filename_or_fobj, index=0, *args, **kwargs):
     # TODO: import spreadsheet by name
     # TODO: unescape values
 
-    filename, _ = get_filename_and_fobj(filename_or_fobj)
+    filename, _ = get_filename_and_fobj(filename_or_fobj, dont_open=True)
 
     ods_file = zipfile.ZipFile(filename)
     content_fobj = ods_file.open('content.xml')

@@ -56,11 +56,9 @@ def import_from_html(filename_or_fobj, encoding='utf-8', index=0,
     # TODO: unescape before returning: html_parser.unescape(html)
     # TODO: lxml -> unicode?
 
-    filename, fobj = get_filename_and_fobj(filename_or_fobj)
+    filename, fobj = get_filename_and_fobj(filename_or_fobj, mode='rb')
     kwargs['encoding'] = encoding
-    html = fobj.read()
-    if not isinstance(html, six.text_type):
-        html = html.decode(encoding)
+    html = fobj.read().decode(encoding)
     html_tree = document_fromstring(html)
     tables = html_tree.xpath('//{}'.format(table_tag))
     table = tables[index]
@@ -129,7 +127,7 @@ def tag_text(html):
 
 
 def count_tables(filename_or_fobj, encoding='utf-8', table_tag='table'):
-    filename, fobj = get_filename_and_fobj(filename_or_fobj)
+    filename, fobj = get_filename_and_fobj(filename_or_fobj, mode='rb')
     html = fobj.read().decode(encoding)
     html_tree = document_fromstring(html)
     tables = html_tree.xpath('//{}'.format(table_tag))

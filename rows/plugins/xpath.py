@@ -40,7 +40,7 @@ def _get_row_data(row, fields_xpath):
 def import_from_xpath(filename_or_fobj, rows_xpath, fields_xpath,
                       encoding='utf-8', *args, **kwargs):
 
-    filename, fobj = get_filename_and_fobj(filename_or_fobj)
+    filename, fobj = get_filename_and_fobj(filename_or_fobj, mode='rb')
     kwargs['encoding'] = encoding
     xml = fobj.read().decode(encoding)
     tree = tree_from_string(xml)

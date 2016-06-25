@@ -28,7 +28,7 @@ def import_from_csv(filename_or_fobj, encoding='utf-8', dialect=None, *args,
                     **kwargs):
     'Import data from a CSV file'
 
-    filename, fobj = get_filename_and_fobj(filename_or_fobj)
+    filename, fobj = get_filename_and_fobj(filename_or_fobj, mode='rb')
 
     if dialect is None:
         sample = fobj.readline().decode(encoding)

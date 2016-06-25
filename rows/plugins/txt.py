@@ -31,7 +31,7 @@ def _max_column_sizes(field_names, table_rows):
 
 def import_from_txt(filename_or_fobj, encoding='utf-8', *args, **kwargs):
     # TODO: should be able to change DASH, PLUS and PIPE
-    filename, fobj = get_filename_and_fobj(filename_or_fobj)
+    filename, fobj = get_filename_and_fobj(filename_or_fobj, mode='rb')
     kwargs['encoding'] = encoding
     contents = fobj.read().decode(encoding).strip().splitlines()
 

@@ -29,6 +29,8 @@ def get_filename_and_fobj(filename_or_fobj, mode='rb', dont_open=False):
     if getattr(filename_or_fobj, 'read', None) is not None:
         fobj = filename_or_fobj
         filename = getattr(fobj, 'name', None)
+        if hasattr(fobj, 'encoding') and fobj.encoding is not None:
+            fobj = fobj.buffer  # fobj (mode='rb') from Python3
     else:
         fobj = open(filename_or_fobj, mode=mode) if not dont_open else None
         filename = filename_or_fobj
