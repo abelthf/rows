@@ -84,7 +84,7 @@ class BinaryField(Field):
     @classmethod
     def serialize(cls, value, *args, **kwargs):
         if value is None:
-            value = ''
+            value = b''
 
         return cls.TYPE[0](value)
 

@@ -55,7 +55,7 @@ class FieldsTestCase(unittest.TestCase):
         self.assertEqual(fields.BinaryField.deserialize(serialized), serialized)
         self.assertIs(type(fields.BinaryField.deserialize(serialized)),
                       six.binary_type)
-        self.assertEqual(fields.BinaryField.serialize(None), '')
+        self.assertEqual(fields.BinaryField.serialize(None), b'')
         self.assertIs(type(fields.BinaryField.serialize(None)), six.binary_type)
         self.assertEqual(fields.BinaryField.serialize(serialized), serialized)
         self.assertIs(type(fields.BinaryField.serialize(serialized)),
