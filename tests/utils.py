@@ -220,7 +220,8 @@ class RowsTestMixIn(object):
         float_value = float(expected_value) * 100
         possible_values = [str(float_value) + '%',
                            str(float_value) + '.0%',
-                           str(float_value) + '.00%']
+                           str(float_value) + '.00%',
+                           str(float(expected_value * 100)) + '%']
         if int(float_value) == float_value:
             possible_values.append(str(int(float_value)) + '%')
         self.assertIn(value, possible_values)
